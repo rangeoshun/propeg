@@ -12,7 +12,7 @@ A client side partial image loader for network optimization using progressive jp
  - `> npm i -g gulp` to install build tool
  - `> gulp`
 
-# and it goes something like This
+# and it goes something like this
 `<img data-pro-src="[url://to.your/img]" />`
 Magic from here on...
 
