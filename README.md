@@ -1,7 +1,9 @@
 # propeg
-A client side partial image loader for network optimization using progressive jpeg.
+**Note: This is a prototype only to demonstrate concept**
 
-Currently works in Chrome and Firefox, because of FetchAPI and ES6 syntax.
+**Currently works in Chrome and Firefox only maybe others too, because of FetchAPI and ES6 syntax, IE and Edge are excluded.**
+
+A client side partial image loader for network optimization using progressive jpeg.
 
 # usage
 
