@@ -20,6 +20,6 @@ Magic from here on...
 
 Works by loading only a selected number of scans, for displaying thumbnail or preview without having anouther copy of the file.
 
-Current imlementation is crude, just fetching the image chunks until the given number of SOS markers are downloaded, then adds a `data:image/jpeg;base64,` as `src` for the requested `<img>`.
+Current imlementation is crude, just fetching the image chunks until the given number of `SOS` markers are downloaded or an `EOI` is recieved, then adds the `data:image/jpeg;base64,...` as `src` for the requested `<img>`.
 
 ![alt tag](https://raw.githubusercontent.com/rangeoshun/propeg/master/readme-img.png)
