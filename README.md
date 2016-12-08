@@ -17,4 +17,9 @@ A client side partial image loader for network optimization using progressive jp
 Magic from here on...
 
 # show and tell
+
+Works by loading only a selected number of scans, for displaying thumbnail or preview without having anouther copy of the file.
+
+Current imlementation is crude, just fetching the image chunks until the given number of SOS markers are downloaded, then adds a `data:image/jpeg;base64,` as `src` for the requested `<img>`.
+
 ![alt tag](https://raw.githubusercontent.com/rangeoshun/propeg/master/readme-img.png)
