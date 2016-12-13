@@ -62,6 +62,10 @@ function getPartialLoop (url, resolve, reject, _length, _imageIntArray, _SOSCoun
 
       length += CHUNK_LENGTH;
 
+      if (hasMarker(intArray, APP0)) {
+        getImageAspectRatio(intArray);
+      }
+
       if (hasMarker(intArray, SOS)) {
         SOSCount++;
       } else if (hasMarker(intArray, EOI)) {
@@ -76,6 +80,15 @@ function getPartialLoop (url, resolve, reject, _length, _imageIntArray, _SOSCoun
       }
     })
     .catch((err) => reject(err));
+}
+
+function spliceAspectRatio (intArray, index) {
+  console.log(intArray[index + 9], intArray.slice(index, index + 31))
+  return intArray.slice(index + 9, index + 9 + 4);
+}
+
+function getImageAspectRatio (intArray) {
+  return intArray.reduce((dimensions, byte, index) => byte === APP0[0] && intArray[++index] === APP0[1] ? spliceAspectRatio(intArray, index) : dimensions, []);
 }
 
 function getImage (url) {
