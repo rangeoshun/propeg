@@ -1,4 +1,4 @@
-/// <reference path="../../typings/main.d.ts" />
+'use strict';
 
 const HTTPServer = require("./http-server");
 const httpServer = new HTTPServer(80);

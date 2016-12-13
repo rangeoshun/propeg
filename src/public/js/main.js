@@ -1,3 +1,5 @@
+'use strict';
+
 const Fetcher = require('./fetcher');
 
 window.fetcher = new Fetcher();

@@ -1,3 +1,5 @@
+'use strict';
+
 function uint8ArrayToHex (uintArray) {
   return uintArray.reduce((acc, n) => acc.concat(n > 15 ? n.toString(16) : `0${n.toString(16)}`), []);
 }
