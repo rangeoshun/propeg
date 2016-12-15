@@ -4,7 +4,8 @@ function uint8ArrayToHex (uintArray) {
   return uintArray.reduce((acc, n) => acc.concat(n > 15 ? n.toString(16) : `0${n.toString(16)}`), []);
 }
 
-const CHUNK_LENGTH = 2048;
+const CHUNK_LENGTH = 4096;
+const SCAN_COUNT = 4;
 const SOS = [0xFF, 0xDA];
 const EOI = [0xFF, 0xD9];
 const APP0 = [0xFF, 0xE0];
@@ -49,7 +50,7 @@ function getPartial (url, from, to) {
   );
 }
 
-function getPartialLoop (url, resolve, reject, _length, _imageIntArray, _SOSCount) {
+function getPartialLoop (url, resolve, reject, cb, _length, _imageIntArray, _SOSCount) {
   let imageIntArray = _imageIntArray || new Uint8Array();
   let SOSCount = _SOSCount || 0;
   let length = _length || 0;
@@ -66,6 +67,8 @@ function getPartialLoop (url, resolve, reject, _length, _imageIntArray, _SOSCoun
         getImageAspectRatio(intArray);
       }
 
+      cb(`data:image/jpeg;base64,${arrayBufferToBase64(mergedImageIntArray)}`);
+
       if (hasMarker(intArray, SOS)) {
         SOSCount++;
       } else if (hasMarker(intArray, EOI)) {
@@ -73,8 +76,8 @@ function getPartialLoop (url, resolve, reject, _length, _imageIntArray, _SOSCoun
         return;
       }
 
-      if (SOSCount < 3) {
-        return getPartialLoop(url, resolve, reject, length, mergedImageIntArray, SOSCount);
+      if (SOSCount < SCAN_COUNT) {
+        return getPartialLoop(url, resolve, reject, cb, length, mergedImageIntArray, SOSCount);
       } else {
         resolve(mergedImageIntArray);
       }
@@ -83,21 +86,24 @@ function getPartialLoop (url, resolve, reject, _length, _imageIntArray, _SOSCoun
 }
 
 function spliceAspectRatio (intArray, index) {
-  console.log(intArray[index + 9], intArray.slice(index, index + 31))
-  return intArray.slice(index + 9, index + 9 + 4);
+  console.log(intArray[index + 11], Int16Array.from(intArray.slice(index + 11, index + 11 + 4 + 16)))
+  return intArray.slice(index + 12, index + 12 + 4);
 }
 
 function getImageAspectRatio (intArray) {
-  return intArray.reduce((dimensions, byte, index) => byte === APP0[0] && intArray[++index] === APP0[1] ? spliceAspectRatio(intArray, index) : dimensions, []);
+  return intArray
+    .reduce((dimensions, byte, index) =>
+      byte === APP0[0] && intArray[++index] === APP0[1] ? spliceAspectRatio(intArray, index) : dimensions, []
+    );
 }
 
-function getImage (url) {
+function getImage (url, cb) {
   if (!url) {
     throw new Error(`Url is mandatory string. Got: ${url}.`);
   }
 
   return new Promise((resolve, reject) => {
-    getPartialLoop(url, resolve, reject);
+    getPartialLoop(url, resolve, reject, cb);
   })
   .then((intArray) => `data:image/jpeg;base64,${arrayBufferToBase64(intArray)}`);
 }
